@@ -3,7 +3,7 @@ var app = angular.module('flapperNews', ['ui.router']);
 app.config([
     '$stateProvider',
     '$urlRouterProvider',
-    function($stateProvider, $urlRouterProvider) {
+    function ($stateProvider, $urlRouterProvider) {
         $stateProvider.state('home', {
             url: '/home',
             templateUrl: '/home.html',
@@ -27,21 +27,21 @@ app.controller('MainCtrl', [
     '$scope',
     'posts',
     function ($scope, posts) {
-        $scope.posts = posts.posts
-        $scope.addPost = function() {
-            if(!$scope.title || $scope.title === '') {
+        $scope.posts = posts.posts;
+        $scope.addPost = function () {
+            if (!$scope.title || $scope.title === '') {
                 return;
             }
             posts.create({
-                title: $scope.title, 
+                title: $scope.title,
                 link: $scope.link,
             });
             $scope.title = '';
             $scope.link = '';
         };
-        $scope.incrementUpvotes = function(post) {
-            post.upvotes += 1;
-        }
+        $scope.incrementUpvotes = function (post) {
+            post.upvote(post);
+        };
     }
 ]);
 
@@ -49,10 +49,10 @@ app.controller('PostsCtrl', [
     '$scope',
     '$stateParams',
     'posts',
-    function($scope, $stateParams, posts) {
+    function ($scope, $stateParams, posts) {
         $scope.post = posts.posts[$stateParams.id];
-        $scope.addComment = function() {
-            if($scope.body === '') {
+        $scope.addComment = function () {
+            if ($scope.body === '') {
                 return;
             }
             $scope.post.comments.push({
@@ -65,7 +65,7 @@ app.controller('PostsCtrl', [
     }
 ]);
 
-app.factory('posts', ['$http', function($http) {
+app.factory('posts', ['$http', function ($http) {
     var o = {
         posts: []
     };
@@ -78,6 +78,13 @@ app.factory('posts', ['$http', function($http) {
         return $http.post('/posts', post).success(function (data) {
             o.posts.push(data);
         });
+    };
+    o.upvote = function (post) {
+        return $http
+            .put('/posts/' + post._id + '/upvote')
+            .success(function (data) {
+                post.upvotes += 1;
+            });
     };
     return o;
 }]);
