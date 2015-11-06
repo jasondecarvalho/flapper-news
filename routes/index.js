@@ -33,13 +33,13 @@ router.get('/posts', function (req, res, next) {
     });
 });
 
-router.get('/posts/:post', function (req, res) {
+router.get('/posts/:post', function (req, res, next) {
     req.post.populate('comments', function (err, post) {
         if (err) {
             return next(err);
         }
+        res.json(req.post);
     });
-    res.json(req.post);
 });
 
 router.post('/posts', function (req, res, next) {
@@ -59,6 +59,17 @@ router.post('/posts/:post/upvote', function (req, res, next) {
         }
         res.json(post);
     });
+});
+
+router.delete('/posts/:post', function (req, res, next) {
+    Post
+        .findById(req.params.post)
+        .remove(function (err) {
+            if(err) {
+                return next(err);
+            }
+            res.send('');
+        });
 });
 
 router.param('comment', function (req, res, next, id) {
@@ -86,20 +97,31 @@ router.post('/posts/:post/comments', function (req, res, next) {
         req.post.save(function (err, post) {
             if (err) {
                 return next(err);
-                res.json(comment);
             }
+            res.json(comment);
         });
     });
-    res.json(comment);
 });
 
 router.post('/posts/:post/comments/:comment/upvote', function (req, res, next) {
-    req.comment.upvote(function (err, post) {
+    req.comment.upvote(function (err, comment) {
         if (err) {
             return next(err);
         }
-        res.json(post);
+        res.json(comment);
     });
+});
+
+
+router.delete('/posts/:post/comments/:comment', function (req, res, next) {
+    Comment
+        .findById(req.params.comment)
+        .remove(function (err) {
+            if(err) {
+                return next(err);
+            }
+            res.send('');
+        });
 });
 
 module.exports = router;
