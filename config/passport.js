@@ -17,7 +17,7 @@ passport.use(new LocalStrategy(
             if (!user.validPassword(password)) {
                 return done(null, false, {message: errorMessage});
             }
-            return done(null, true);
+            return done(null, user);
         });
     }
 ));

@@ -60,12 +60,22 @@ app.controller('AuthCtrl', [
             });
         };
         $scope.logIn = function () {
-            $auth.logIn($scope.user).error(function (error) {
+            auth.logIn($scope.user).error(function (error) {
                 $scope.error = error;
             }).then(function () {
                 $state.go('home');
             });
         };
+    }
+]);
+
+app.controller('NavCtrl', [
+    '$scope',
+    'auth',
+    function ($scope, auth) {
+        $scope.isLoggedIn = auth.isLoggedIn;
+        $scope.currentUser = auth.currentUser;
+        $scope.logOut = auth.logOut;
     }
 ]);
 
