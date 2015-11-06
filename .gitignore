@@ -1,2 +1,4 @@
 .idea/
 flapper-news.iml
+node_modules/
+npm-debug.log
